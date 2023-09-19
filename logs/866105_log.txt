@@ -1,0 +1,133 @@
+Namespace(batch_size=500, bce_lambda=1.0, bec_p=0.0, bec_p_dec=0.0, ber_lambda=1.0, block_len=100, block_len_high=200, block_len_low=10, bsc_p=0.0, bsc_p_dec=0.0, channel='awgn', code_rate_k=1, code_rate_n=3, dec_act='linear', dec_kernel_size=5, dec_lr=0.005, dec_num_layer=5, dec_num_unit=70, dec_rnn='gru', decoder='TurboAE_rate3_rnn', demod_lr=0.005, demod_num_layer=1, demod_num_unit=20, dropout=0.0, enc_act='elu', enc_clipping='both', enc_grad_limit=0.01, enc_kernel_size=5, enc_lr=0.005, enc_num_layer=2, enc_num_unit=70, enc_quantize_level=2, enc_rnn='gru', enc_truncate_limit=0, enc_value_limit=1.0, encoder='TurboAE_rate3_cnn', extrinsic=1, focal_alpha=1.0, focal_gamma=0.0, img_size=10, init_nw_weight='default', is_interleave=1, is_k_same_code=False, is_parallel=1, is_same_interleaver=1, is_variable_block_len=False, joint_train=0, k_same_code=2, lambda_maxBCE=0.01, loss='bce', mod_lr=0.005, mod_num_layer=1, mod_num_unit=20, mod_pc='block_power', mod_rate=2, momentum=0.9, no_code_norm=False, no_cuda=False, num_ber_puncture=5, num_block=500, num_epoch=10, num_iter_ft=5, num_iteration=6, num_train_dec=5, num_train_demod=5, num_train_enc=1, num_train_mod=1, optimizer='adam', precompute_norm_stats=False, print_pos_ber=False, print_pos_power=False, print_test_traj=True, radar_power=5.0, radar_prob=0.05, rec_quantize=False, rec_quantize_level=2, rec_quantize_limit=1.0, snr_points=12, snr_test_end=4.0, snr_test_start=-1.5, test_channel_mode='block_norm', test_ratio=1, train_channel_mode='block_norm', train_dec_channel_high=2.0, train_dec_channel_low=-1.5, train_enc_channel_high=2.0, train_enc_channel_low=2.0, vv=5)
+using random interleaver [26 86  2 55 75 93 16 73 54 95 53 92 78 13  7 30 22 24 33  8 43 62  3 71
+ 45 48  6 99 82 76 60 80 90 68 51 27 18 56 63 74  1 61 42 41  4 15 17 40
+ 38  5 91 59  0 34 28 50 11 35 23 52 10 31 66 57 79 85 32 84 14 89 19 29
+ 49 97 98 69 20 94 72 77 25 37 81 46 39 65 58 12 88 70 87 36 21 83  9 96
+ 67 64 47 44] [18 29 64 92 72 87  5 15 12 17 61 76  9 78 80  7 33  6 37 74 79  1 45 28
+ 60 52 25 39 97 44 16 55 83 49 22 70 47  4 82 94 53 66 26 84 31 63  8 75
+ 98 57 71 99 86 96 69 24 30 13 40 56 68 95 81 19 38 91 54 32 51 85 11 89
+ 90 36 65 88 41 14 27 50 20 46 67 35 62  2 59 23 58 43 10  0 73 21 77 42
+  3 93 48 34]
+Channel_AE(
+  (enc): ENC_interCNN(
+    (enc_cnn_1): DataParallel(
+      (module): SameShapeConv1d(
+        (cnns): ModuleList(
+          (0): Conv1d(1, 70, kernel_size=(5,), stride=(1,), padding=(2,))
+          (1): Conv1d(70, 70, kernel_size=(5,), stride=(1,), padding=(2,))
+        )
+      )
+    )
+    (enc_cnn_2): DataParallel(
+      (module): SameShapeConv1d(
+        (cnns): ModuleList(
+          (0): Conv1d(1, 70, kernel_size=(5,), stride=(1,), padding=(2,))
+          (1): Conv1d(70, 70, kernel_size=(5,), stride=(1,), padding=(2,))
+        )
+      )
+    )
+    (enc_cnn_3): DataParallel(
+      (module): SameShapeConv1d(
+        (cnns): ModuleList(
+          (0): Conv1d(1, 70, kernel_size=(5,), stride=(1,), padding=(2,))
+          (1): Conv1d(70, 70, kernel_size=(5,), stride=(1,), padding=(2,))
+        )
+      )
+    )
+    (enc_linear_1): DataParallel(
+      (module): Linear(in_features=70, out_features=1, bias=True)
+    )
+    (enc_linear_2): DataParallel(
+      (module): Linear(in_features=70, out_features=1, bias=True)
+    )
+    (enc_linear_3): DataParallel(
+      (module): Linear(in_features=70, out_features=1, bias=True)
+    )
+    (interleaver): Interleaver()
+  )
+  (dec): DEC_LargeRNN(
+    (interleaver): Interleaver()
+    (deinterleaver): DeInterleaver()
+    (dropout): Dropout(p=0.0, inplace=False)
+    (dec1_rnns): ModuleList(
+      (0): DataParallel(
+        (module): GRU(7, 70, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (1): DataParallel(
+        (module): GRU(7, 70, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (2): DataParallel(
+        (module): GRU(7, 70, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (3): DataParallel(
+        (module): GRU(7, 70, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (4): DataParallel(
+        (module): GRU(7, 70, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (5): DataParallel(
+        (module): GRU(7, 70, num_layers=2, batch_first=True, bidirectional=True)
+      )
+    )
+    (dec2_rnns): ModuleList(
+      (0): DataParallel(
+        (module): GRU(7, 70, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (1): DataParallel(
+        (module): GRU(7, 70, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (2): DataParallel(
+        (module): GRU(7, 70, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (3): DataParallel(
+        (module): GRU(7, 70, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (4): DataParallel(
+        (module): GRU(7, 70, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (5): DataParallel(
+        (module): GRU(7, 70, num_layers=2, batch_first=True, bidirectional=True)
+      )
+    )
+    (dec1_outputs): ModuleList(
+      (0): DataParallel(
+        (module): Linear(in_features=140, out_features=5, bias=True)
+      )
+      (1): DataParallel(
+        (module): Linear(in_features=140, out_features=5, bias=True)
+      )
+      (2): DataParallel(
+        (module): Linear(in_features=140, out_features=5, bias=True)
+      )
+      (3): DataParallel(
+        (module): Linear(in_features=140, out_features=5, bias=True)
+      )
+      (4): DataParallel(
+        (module): Linear(in_features=140, out_features=5, bias=True)
+      )
+      (5): DataParallel(
+        (module): Linear(in_features=140, out_features=5, bias=True)
+      )
+    )
+    (dec2_outputs): ModuleList(
+      (0): DataParallel(
+        (module): Linear(in_features=140, out_features=5, bias=True)
+      )
+      (1): DataParallel(
+        (module): Linear(in_features=140, out_features=5, bias=True)
+      )
+      (2): DataParallel(
+        (module): Linear(in_features=140, out_features=5, bias=True)
+      )
+      (3): DataParallel(
+        (module): Linear(in_features=140, out_features=5, bias=True)
+      )
+      (4): DataParallel(
+        (module): Linear(in_features=140, out_features=5, bias=True)
+      )
+      (5): DataParallel(
+        (module): Linear(in_features=140, out_features=1, bias=True)
+      )
+    )
+  )
+)

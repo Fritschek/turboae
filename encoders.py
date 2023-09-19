@@ -755,48 +755,48 @@ class CNN_encoder_rate2(ENCBase):
 # Support for DeepTurbo: neural Turbo decoders.
 # Turbo Encoder supports all BPSK Conv Codes.
 #######################################################
-class ENC_TurboCode(ENCBase):
-    def __init__(self, args, p_array):
-        super(ENC_TurboCode, self).__init__(args)
-        self.p_array = p_array
-
-    def set_interleaver(self, p_array):
-        self.p_array = p_array
-
-    def forward(self, inputs):
-        turbo_code_now = 2.0*turbo_enc(inputs, self.args, self.p_array) - 1.0
-        turbo_code = turbo_code_now.to(self.this_device)
-        return turbo_code
-
-import commpy.channelcoding.turbo as turbo
-import commpy.channelcoding.convcode as cc
-import commpy.channelcoding.interleavers as RandInterlv
-
+#class ENC_TurboCode(ENCBase):
+#    def __init__(self, args, p_array):
+#        super(ENC_TurboCode, self).__init__(args)
+#        self.p_array = p_array
+#
+#    def set_interleaver(self, p_array):
+#        self.p_array = p_array
+#
+#    def forward(self, inputs):
+#        turbo_code_now = 2.0*turbo_enc(inputs, self.args, self.p_array) - 1.0
+#        turbo_code = turbo_code_now.to(self.this_device)
+#        return turbo_code
+#
+#import commpy.channelcoding.turbo as turbo
+#import commpy.channelcoding.convcode as cc
+#import commpy.channelcoding.interleavers as RandInterlv
+#
 # only support rate 1/3 turbo code.
-def turbo_enc(X_train_raw, args, p_array):
-    num_block = X_train_raw.shape[0]
-    x_code    = []
+#def turbo_enc(X_train_raw, args, p_array):
+#    num_block = X_train_raw.shape[0]
+#    x_code    = []
+#
+#    if args.encoder == 'Turbo_rate3_lte':         # Turbo-LTE
+#        M = np.array([3])                         # Number of delay elements in the convolutional encoder
+#        generator_matrix = np.array([[13, 11]])   # Encoder of convolutional encoder
+#        feedback = 13                             # Feedback of convolutional encoder
+#    else:                                         # Turbo-757
+#        M = np.array([2])                         # Number of delay elements in the convolutional encoder
+#        generator_matrix = np.array([[7, 5]])     # Encoder of convolutional encoder
+#        feedback = 7                              # Feedback of convolutional encoder
+#
+#    trellis1 = cc.Trellis(M, generator_matrix,feedback=feedback)
+#    trellis2 = cc.Trellis(M, generator_matrix,feedback=feedback)
+#    interleaver = RandInterlv.RandInterlv(args.block_len, 0)
+#    interleaver.p_array = p_array
 
-    if args.encoder == 'Turbo_rate3_lte':         # Turbo-LTE
-        M = np.array([3])                         # Number of delay elements in the convolutional encoder
-        generator_matrix = np.array([[13, 11]])   # Encoder of convolutional encoder
-        feedback = 13                             # Feedback of convolutional encoder
-    else:                                         # Turbo-757
-        M = np.array([2])                         # Number of delay elements in the convolutional encoder
-        generator_matrix = np.array([[7, 5]])     # Encoder of convolutional encoder
-        feedback = 7                              # Feedback of convolutional encoder
-
-    trellis1 = cc.Trellis(M, generator_matrix,feedback=feedback)
-    trellis2 = cc.Trellis(M, generator_matrix,feedback=feedback)
-    interleaver = RandInterlv.RandInterlv(args.block_len, 0)
-    interleaver.p_array = p_array
-
-    for idx in range(num_block):
-        #print(X_train_raw[idx, :, 0])
-        np_inputs    = np.array(X_train_raw[idx, :, 0].type(torch.IntTensor).detach())
-        [sys, par1, par2] = turbo.turbo_encode(np_inputs, trellis1, trellis2, interleaver)
-        xx = np.array([sys, par1, par2]).T
-        x_code.append(xx)
-
-    return torch.from_numpy(np.array(x_code)).type(torch.FloatTensor)
+#    for idx in range(num_block):
+#        #print(X_train_raw[idx, :, 0])
+#        np_inputs    = np.array(X_train_raw[idx, :, 0].type(torch.IntTensor).detach())
+#        [sys, par1, par2] = turbo.turbo_encode(np_inputs, trellis1, trellis2, interleaver)
+#        xx = np.array([sys, par1, par2]).T
+#        x_code.append(xx)
+#
+#    return torch.from_numpy(np.array(x_code)).type(torch.FloatTensor)
 

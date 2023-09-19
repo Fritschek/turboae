@@ -1,0 +1,252 @@
+Namespace(batch_size=500, bce_lambda=1.0, bec_p=0.0, bec_p_dec=0.0, ber_lambda=1.0, block_len=100, block_len_high=200, block_len_low=10, bsc_p=0.0, bsc_p_dec=0.0, channel='awgn', code_rate_k=1, code_rate_n=3, dec_act='linear', dec_kernel_size=5, dec_lr=0.0001, dec_num_layer=5, dec_num_unit=50, dec_rnn='gru', decoder='TurboAE_rate3_rnn', demod_lr=0.005, demod_num_layer=1, demod_num_unit=20, dropout=0.0, enc_act='elu', enc_clipping='both', enc_grad_limit=0.01, enc_kernel_size=5, enc_lr=0.0001, enc_num_layer=2, enc_num_unit=50, enc_quantize_level=2, enc_rnn='gru', enc_truncate_limit=0, enc_value_limit=1.0, encoder='TurboAE_rate3_cnn', extrinsic=1, focal_alpha=1.0, focal_gamma=0.0, img_size=10, init_nw_weight='default', is_interleave=1, is_k_same_code=False, is_parallel=1, is_same_interleaver=1, is_variable_block_len=False, joint_train=0, k_same_code=2, lambda_maxBCE=0.01, loss='bce', mod_lr=0.005, mod_num_layer=1, mod_num_unit=20, mod_pc='block_power', mod_rate=2, momentum=0.9, no_code_norm=False, no_cuda=False, num_ber_puncture=5, num_block=500, num_epoch=10, num_iter_ft=5, num_iteration=6, num_train_dec=5, num_train_demod=5, num_train_enc=1, num_train_mod=1, optimizer='adam', precompute_norm_stats=False, print_pos_ber=False, print_pos_power=False, print_test_traj=True, radar_power=5.0, radar_prob=0.05, rec_quantize=False, rec_quantize_level=2, rec_quantize_limit=1.0, snr_points=12, snr_test_end=4.0, snr_test_start=-1.5, test_channel_mode='block_norm', test_ratio=1, train_channel_mode='block_norm', train_dec_channel_high=2.0, train_dec_channel_low=-1.5, train_enc_channel_high=2.0, train_enc_channel_low=2.0, vv=5)
+using random interleaver [26 86  2 55 75 93 16 73 54 95 53 92 78 13  7 30 22 24 33  8 43 62  3 71
+ 45 48  6 99 82 76 60 80 90 68 51 27 18 56 63 74  1 61 42 41  4 15 17 40
+ 38  5 91 59  0 34 28 50 11 35 23 52 10 31 66 57 79 85 32 84 14 89 19 29
+ 49 97 98 69 20 94 72 77 25 37 81 46 39 65 58 12 88 70 87 36 21 83  9 96
+ 67 64 47 44] [18 29 64 92 72 87  5 15 12 17 61 76  9 78 80  7 33  6 37 74 79  1 45 28
+ 60 52 25 39 97 44 16 55 83 49 22 70 47  4 82 94 53 66 26 84 31 63  8 75
+ 98 57 71 99 86 96 69 24 30 13 40 56 68 95 81 19 38 91 54 32 51 85 11 89
+ 90 36 65 88 41 14 27 50 20 46 67 35 62  2 59 23 58 43 10  0 73 21 77 42
+  3 93 48 34]
+Channel_AE(
+  (enc): ENC_interCNN(
+    (enc_cnn_1): DataParallel(
+      (module): SameShapeConv1d(
+        (cnns): ModuleList(
+          (0): Conv1d(1, 50, kernel_size=(5,), stride=(1,), padding=(2,))
+          (1): Conv1d(50, 50, kernel_size=(5,), stride=(1,), padding=(2,))
+        )
+      )
+    )
+    (enc_cnn_2): DataParallel(
+      (module): SameShapeConv1d(
+        (cnns): ModuleList(
+          (0): Conv1d(1, 50, kernel_size=(5,), stride=(1,), padding=(2,))
+          (1): Conv1d(50, 50, kernel_size=(5,), stride=(1,), padding=(2,))
+        )
+      )
+    )
+    (enc_cnn_3): DataParallel(
+      (module): SameShapeConv1d(
+        (cnns): ModuleList(
+          (0): Conv1d(1, 50, kernel_size=(5,), stride=(1,), padding=(2,))
+          (1): Conv1d(50, 50, kernel_size=(5,), stride=(1,), padding=(2,))
+        )
+      )
+    )
+    (enc_linear_1): DataParallel(
+      (module): Linear(in_features=50, out_features=1, bias=True)
+    )
+    (enc_linear_2): DataParallel(
+      (module): Linear(in_features=50, out_features=1, bias=True)
+    )
+    (enc_linear_3): DataParallel(
+      (module): Linear(in_features=50, out_features=1, bias=True)
+    )
+    (interleaver): Interleaver()
+  )
+  (dec): DEC_LargeRNN(
+    (interleaver): Interleaver()
+    (deinterleaver): DeInterleaver()
+    (dropout): Dropout(p=0.0, inplace=False)
+    (dec1_rnns): ModuleList(
+      (0): DataParallel(
+        (module): GRU(7, 50, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (1): DataParallel(
+        (module): GRU(7, 50, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (2): DataParallel(
+        (module): GRU(7, 50, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (3): DataParallel(
+        (module): GRU(7, 50, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (4): DataParallel(
+        (module): GRU(7, 50, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (5): DataParallel(
+        (module): GRU(7, 50, num_layers=2, batch_first=True, bidirectional=True)
+      )
+    )
+    (dec2_rnns): ModuleList(
+      (0): DataParallel(
+        (module): GRU(7, 50, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (1): DataParallel(
+        (module): GRU(7, 50, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (2): DataParallel(
+        (module): GRU(7, 50, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (3): DataParallel(
+        (module): GRU(7, 50, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (4): DataParallel(
+        (module): GRU(7, 50, num_layers=2, batch_first=True, bidirectional=True)
+      )
+      (5): DataParallel(
+        (module): GRU(7, 50, num_layers=2, batch_first=True, bidirectional=True)
+      )
+    )
+    (dec1_outputs): ModuleList(
+      (0): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (1): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (2): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (3): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (4): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (5): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+    )
+    (dec2_outputs): ModuleList(
+      (0): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (1): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (2): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (3): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (4): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (5): DataParallel(
+        (module): Linear(in_features=100, out_features=1, bias=True)
+      )
+    )
+  )
+)
+====> Epoch: 1 Average loss: 0.69245130  running time 0.8564846515655518
+====> Epoch: 1 Average loss: 0.69128895  running time 0.45711207389831543
+====> Epoch: 1 Average loss: 0.69005829  running time 0.4506065845489502
+====> Epoch: 1 Average loss: 0.68864280  running time 0.4502124786376953
+====> Epoch: 1 Average loss: 0.68745482  running time 0.4519467353820801
+====> Epoch: 1 Average loss: 0.68588263  running time 0.4536747932434082
+====> Test set BCE loss 0.6848268508911133 Custom Loss 0.6848268508911133 with ber  0.35311999917030334
+====> Epoch: 2 Average loss: 0.68458170  running time 0.44082093238830566
+====> Epoch: 2 Average loss: 0.68330675  running time 0.4524698257446289
+====> Epoch: 2 Average loss: 0.68224216  running time 0.45378780364990234
+====> Epoch: 2 Average loss: 0.68095952  running time 0.45157337188720703
+====> Epoch: 2 Average loss: 0.67968047  running time 0.4525735378265381
+====> Epoch: 2 Average loss: 0.67823184  running time 0.44981908798217773
+====> Test set BCE loss 0.6768532395362854 Custom Loss 0.6768532395362854 with ber  0.32721999287605286
+====> Epoch: 3 Average loss: 0.67684251  running time 0.43567800521850586
+====> Epoch: 3 Average loss: 0.67566693  running time 0.4531853199005127
+====> Epoch: 3 Average loss: 0.67396623  running time 0.4512488842010498
+====> Epoch: 3 Average loss: 0.67265189  running time 0.4524979591369629
+====> Epoch: 3 Average loss: 0.67107886  running time 0.45172595977783203
+====> Epoch: 3 Average loss: 0.67031962  running time 0.4527876377105713
+====> Test set BCE loss 0.6683494448661804 Custom Loss 0.6683494448661804 with ber  0.3042199909687042
+====> Epoch: 4 Average loss: 0.66824013  running time 0.43782854080200195
+====> Epoch: 4 Average loss: 0.66628814  running time 0.4528200626373291
+====> Epoch: 4 Average loss: 0.66479957  running time 0.45278429985046387
+====> Epoch: 4 Average loss: 0.66373390  running time 0.4507935047149658
+====> Epoch: 4 Average loss: 0.66221571  running time 0.4518167972564697
+====> Epoch: 4 Average loss: 0.66071075  running time 0.4548075199127197
+====> Test set BCE loss 0.658193051815033 Custom Loss 0.658193051815033 with ber  0.28068000078201294
+====> Epoch: 5 Average loss: 0.65821809  running time 0.43782877922058105
+====> Epoch: 5 Average loss: 0.65691829  running time 0.4519071578979492
+====> Epoch: 5 Average loss: 0.65514028  running time 0.451444149017334
+====> Epoch: 5 Average loss: 0.65387315  running time 0.449798583984375
+====> Epoch: 5 Average loss: 0.65218532  running time 0.4526700973510742
+====> Epoch: 5 Average loss: 0.65059227  running time 0.45179128646850586
+====> Test set BCE loss 0.6470187902450562 Custom Loss 0.6470187902450562 with ber  0.27855998277664185
+====> Epoch: 6 Average loss: 0.64792019  running time 0.4358341693878174
+====> Epoch: 6 Average loss: 0.64598483  running time 0.45082902908325195
+====> Epoch: 6 Average loss: 0.64374453  running time 0.4508075714111328
+====> Epoch: 6 Average loss: 0.64246809  running time 0.4537367820739746
+====> Epoch: 6 Average loss: 0.64065683  running time 0.4541609287261963
+====> Epoch: 6 Average loss: 0.63869059  running time 0.45308446884155273
+====> Test set BCE loss 0.6360762715339661 Custom Loss 0.6360762715339661 with ber  0.28091999888420105
+====> Epoch: 7 Average loss: 0.63671905  running time 0.4372217655181885
+====> Epoch: 7 Average loss: 0.63445461  running time 0.4533569812774658
+====> Epoch: 7 Average loss: 0.63197881  running time 0.4527881145477295
+====> Epoch: 7 Average loss: 0.63161755  running time 0.455780029296875
+====> Epoch: 7 Average loss: 0.62897289  running time 0.4550151824951172
+====> Epoch: 7 Average loss: 0.62725258  running time 0.4375436305999756
+====> Test set BCE loss 0.6238340735435486 Custom Loss 0.6238340735435486 with ber  0.2870199978351593
+====> Epoch: 8 Average loss: 0.62350857  running time 0.43800806999206543
+====> Epoch: 8 Average loss: 0.62276256  running time 0.4517369270324707
+====> Epoch: 8 Average loss: 0.62050116  running time 0.45240211486816406
+====> Epoch: 8 Average loss: 0.61911589  running time 0.4508218765258789
+====> Epoch: 8 Average loss: 0.61721873  running time 0.4538002014160156
+====> Epoch: 8 Average loss: 0.61581880  running time 0.4522521495819092
+====> Test set BCE loss 0.6106009483337402 Custom Loss 0.6106009483337402 with ber  0.29179999232292175
+====> Epoch: 9 Average loss: 0.60949290  running time 0.43743467330932617
+====> Epoch: 9 Average loss: 0.61116993  running time 0.4508204460144043
+====> Epoch: 9 Average loss: 0.60947591  running time 0.44979143142700195
+====> Epoch: 9 Average loss: 0.60737431  running time 0.45378613471984863
+====> Epoch: 9 Average loss: 0.60571116  running time 0.4518580436706543
+====> Epoch: 9 Average loss: 0.60456342  running time 0.4547851085662842
+====> Test set BCE loss 0.6000877022743225 Custom Loss 0.6000877022743225 with ber  0.2986599802970886
+====> Epoch: 10 Average loss: 0.59930450  running time 0.4370608329772949
+====> Epoch: 10 Average loss: 0.59964931  running time 0.4526176452636719
+====> Epoch: 10 Average loss: 0.59809709  running time 0.45179319381713867
+====> Epoch: 10 Average loss: 0.59750611  running time 0.4518153667449951
+====> Epoch: 10 Average loss: 0.59569013  running time 0.4528810977935791
+====> Epoch: 10 Average loss: 0.59340471  running time 0.45178747177124023
+====> Test set BCE loss 0.589357316493988 Custom Loss 0.589357316493988 with ber  0.29666000604629517
+test loss trajectory [0.6848268508911133, 0.6768532395362854, 0.6683494448661804, 0.658193051815033, 0.6470187902450562, 0.6360762715339661, 0.6238340735435486, 0.6106009483337402, 0.6000877022743225, 0.589357316493988]
+test ber trajectory [0.35311999917030334, 0.32721999287605286, 0.3042199909687042, 0.28068000078201294, 0.27855998277664185, 0.28091999888420105, 0.2870199978351593, 0.29179999232292175, 0.2986599802970886, 0.29666000604629517]
+total epoch 10
+saved model ./tmp/torch_model_391429.pt
+SNRS [-1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
+no pos BER specified.
+Test SNR -1.5 with ber  0.3064599931240082 with bler 1.0
+Punctured Test SNR -1.5 with ber  0.0 with bler 0.0
+no pos BER specified.
+Test SNR -1.0 with ber  0.30313998460769653 with bler 1.0
+Punctured Test SNR -1.0 with ber  0.0 with bler 0.0
+no pos BER specified.
+Test SNR -0.5 with ber  0.3016799986362457 with bler 1.0
+Punctured Test SNR -0.5 with ber  0.0 with bler 0.0
+no pos BER specified.
+Test SNR 0.0 with ber  0.3021000027656555 with bler 1.0
+Punctured Test SNR 0.0 with ber  0.0 with bler 0.0
+no pos BER specified.
+Test SNR 0.5 with ber  0.2989400029182434 with bler 1.0
+Punctured Test SNR 0.5 with ber  0.0 with bler 0.0
+no pos BER specified.
+Test SNR 1.0 with ber  0.29729998111724854 with bler 1.0
+Punctured Test SNR 1.0 with ber  0.0 with bler 0.0
+no pos BER specified.
+Test SNR 1.5 with ber  0.29892000555992126 with bler 1.0
+Punctured Test SNR 1.5 with ber  0.0 with bler 0.0
+no pos BER specified.
+Test SNR 2.0 with ber  0.2977599799633026 with bler 1.0
+Punctured Test SNR 2.0 with ber  0.0 with bler 0.0
+no pos BER specified.
+Test SNR 2.5 with ber  0.29396000504493713 with bler 1.0
+Punctured Test SNR 2.5 with ber  0.0 with bler 0.0
+no pos BER specified.
+Test SNR 3.0 with ber  0.2919999957084656 with bler 1.0
+Punctured Test SNR 3.0 with ber  0.0 with bler 0.0
+no pos BER specified.
+Test SNR 3.5 with ber  0.2954399883747101 with bler 1.0
+Punctured Test SNR 3.5 with ber  0.0 with bler 0.0
+no pos BER specified.
+Test SNR 4.0 with ber  0.2937600016593933 with bler 1.0
+Punctured Test SNR 4.0 with ber  0.0 with bler 0.0
+final results on SNRs  [-1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
+BER [0.3064599931240082, 0.30313998460769653, 0.3016799986362457, 0.3021000027656555, 0.2989400029182434, 0.29729998111724854, 0.29892000555992126, 0.2977599799633026, 0.29396000504493713, 0.2919999957084656, 0.2954399883747101, 0.2937600016593933]
+BLER [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+final results on punctured SNRs  [-1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
+BER [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+BLER [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+encoder power is tensor(1., device='cuda:0')
+adjusted SNR should be [-1.4999997446509226, -1.0000000166986343, -0.49999973308696327, -0.0, 0.5000001308463472, 1.0000002900227403, 1.5000000201403676, 2.0000002404171053, 2.5000000877622415, 3.0000002493010487, 3.500000207085638, 3.999999717024358]
